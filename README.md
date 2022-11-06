@@ -6,4 +6,4 @@ The project-overview page can be found here, https://github.com/cu-ecen-aeld/fin
 
 # Team Members
 1. Mahesh Gudipati
-2. Abijith Ananda Krishnan
+2. Abijith Ananda Krishnan 
