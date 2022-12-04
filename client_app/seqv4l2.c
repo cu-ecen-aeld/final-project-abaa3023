@@ -307,18 +307,18 @@ void main(int argc, char *argv[])
 }
 
 
-#define OBJECT_NOT_DETECTED (0)
-#define OBJECT_DETECTED     (1)
+#define OBJECT_NOT_DETECTED "0"
+#define OBJECT_DETECTED     "1"
 
 int enable_surveillance = 0;
 int stop_surveillance_cnt = 0;
 int start_surveillance_cnt = 0;
 
-int test_data[] = {0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                   0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+//int test_data[] = {0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  //                 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-int test_cnt = 0;
-int read_sensor_state()
+//int test_cnt = 0;
+unsigned char read_sensor_state()
 {
     unsigned char sensor_data;
 
@@ -335,7 +335,8 @@ int read_sensor_state()
 	printf("\n\r Failed to get data from gpio driver");
     }
     printf("\n\r Sensor data is %d", sensor_data);
-    return test_data[(test_cnt++) % sizeof(test_data)];
+    return sensor_data;
+    //return test_data[(test_cnt++) % sizeof(test_data)];
 }
 
 
@@ -348,7 +349,7 @@ void run_surveillance_camera_state_machine(int state)
 			if (++start_surveillance_cnt >= 20) {
 				enable_surveillance = 1;
 				stop_surveillance_cnt = 0;
-			printf("\n\r starting https://githubhelp.com/Sensirion/embedded-sgp");
+			printf("\n\r Trigger detected, start capturing");
 	
 			}
 		}
@@ -357,7 +358,7 @@ void run_surveillance_camera_state_machine(int state)
 			if (++stop_surveillance_cnt >= 40) {
 			    start_surveillance_cnt = 0;
 			    enable_surveillance = 0;
-			printf("\n\r stopping https://githubhelp.com/Sensirion/embedded-sgp");
+			printf("\n\r stop capturing");
 	
 			}
 		} else {
