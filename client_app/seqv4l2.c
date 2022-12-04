@@ -399,7 +399,7 @@ void Sequencer(int id)
 
     // Release each service at a sub-rate of the generic sequencer rate
 
-    if((seqCnt % 4) == 0) {
+    if((seqCnt % 25) == 0) {
        int state = 0;
        state = read_sensor_state();
        run_surveillance_camera_state_machine(state);
