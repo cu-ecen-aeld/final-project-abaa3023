@@ -446,7 +446,7 @@ void *Service_1_frame_acquisition(void *threadp)
         clock_gettime(MY_CLOCK_TYPE, &current_time_val); current_realtime=realtime(&current_time_val);
         syslog(LOG_CRIT, "S1 at 25 Hz on core %d for release %llu @ sec=%6.9lf\n", sched_getcpu(), S1Cnt, current_realtime-start_realtime);
 
-	if(S1Cnt > 250) {abortTest=TRUE;};
+	//if(S1Cnt > 250) {abortTest=TRUE;};
     }
 
     // Resource shutdown here
@@ -514,7 +514,7 @@ void *Service_3_frame_storage(void *threadp)
         syslog(LOG_CRIT, "S3 at 1 Hz on core %d for release %llu @ sec=%6.9lf\n", sched_getcpu(), S3Cnt, current_realtime-start_realtime);
 
 	// after last write, set synchronous abort
-	if(store_cnt == 5) {abortTest=TRUE;};
+//	if(store_cnt == 5) {abortTest=TRUE;};
     }
 
     syslog(LOG_CRIT, "S3 thread exiting\n");
