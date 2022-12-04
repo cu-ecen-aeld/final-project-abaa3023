@@ -400,6 +400,9 @@ void Sequencer(int id)
     // Release each service at a sub-rate of the generic sequencer rate
 
     if((seqCnt % 25) == 0) {
+
+        printf("================================Scheduer @ sec=%6.9lf\n", current_realtime-start_realtime);
+
        int state = 0;
        state = read_sensor_state();
        run_surveillance_camera_state_machine(state);
