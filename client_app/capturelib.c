@@ -366,18 +366,18 @@ static void dump_ppm(const void *p, int size, unsigned int tag, struct timespec 
     strncat(&ppm_header[29], " msec \n"HRES_STR" "VRES_STR"\n255\n", 19);
     
     // subtract 1 from sizeof header because it includes the null terminator for the string
-    written=write(dumpfd, ppm_header, sizeof(ppm_header)-1);
+   // written=write(dumpfd, ppm_header, sizeof(ppm_header)-1);
     tx_frame(ppm_header, sizeof(ppm_header)-1);
     tx_frame(p, size);
 
     total=0;
-
+#if 0
     do
     {
         written=write(dumpfd, p, size);
         total+=written;
     } while(total < size);
-
+#endif
     clock_gettime(CLOCK_MONOTONIC, &time_now);
     fnow = (double)time_now.tv_sec + (double)time_now.tv_nsec / 1000000000.0;
     printf("Frame written to flash at %lf, %d, bytes\n", (fnow-fstart), total);
@@ -537,13 +537,13 @@ static int read_frame(void)
         switch (errno)
         {
             case EAGAIN:
-                return 0;
+                return EAGAIN;;
 
             case EIO:
                 /* Could ignore EIO, but drivers should only set for serious errors, although some set for
                    non-fatal errors too.
                  */
-                return 0;
+                return EIO;
 
 
             default:
@@ -554,7 +554,7 @@ static int read_frame(void)
 
     read_framecnt++;
 
-    //printf("frame %d ", read_framecnt);
+    printf("frame %d ", read_framecnt);
 
     if(read_framecnt == 0) 
     {
@@ -564,7 +564,7 @@ static int read_frame(void)
 
     assert(v4l2_buf.index < n_buffers);
 
-    return 1;
+    return 0;
 }
 
 
@@ -584,12 +584,15 @@ int seq_frame_read(void)
 
     rc = select(camera_device_fd + 1, &fds, NULL, NULL, &tv);
 
-    read_frame();
-
     buf = get_frame_buf();
     if (buf == NULL) {
        printf("\n\rNo free frame buffs available... try again");
        return -1;
+    }
+
+    if (read_frame() != 0) {
+	enq_frame_buf(buf);  
+	return 0;
     }
 
     // save off copy of image with time-stamp here
@@ -637,6 +640,7 @@ int seq_frame_process(void)
         }
 
         cnt=process_image((void *)buf->frame, buf->frame_size);
+        enq_frame_buf(buf);  
 #if 0      
         if (write_queue(buf, FRAME_TX_QUEUE) != 0) {
 	    printf("\n\r unable to enq frame buffer into TX queue");
