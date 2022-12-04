@@ -32,7 +32,7 @@ case "$1" in
 	module="gpio_driver"
 
 	# Install module
-	insmod /lib/modules/5.15.18/extra/$module.ko || exit 1
+	insmod /lib/modules/5.10.92-v7/extra/$module.ko || exit 1
 
         echo "Get the major number (allocated with allocate_chrdev_region) from /proc/devices"	
 	major=$(awk "\$2==\"$module\" {print \$1}" /proc/devices)
