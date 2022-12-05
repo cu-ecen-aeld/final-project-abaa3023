@@ -392,14 +392,15 @@ void Sequencer(int id)
            
     seqCnt++;
 
-    //clock_gettime(MY_CLOCK_TYPE, &current_time_val); current_realtime=realtime(&current_time_val);
+    clock_gettime(MY_CLOCK_TYPE, &current_time_val); 
+    current_realtime=realtime(&current_time_val);
     //printf("Sequencer on core %d for cycle %llu @ sec=%6.9lf\n", sched_getcpu(), seqCnt, current_realtime-start_realtime);
     //syslog(LOG_CRIT, "Sequencer on core %d for cycle %llu @ sec=%6.9lf\n", sched_getcpu(), seqCnt, current_realtime-start_realtime);
 
 
     // Release each service at a sub-rate of the generic sequencer rate
 
-    if((seqCnt % 25) == 0) {
+    if((seqCnt % 50) == 0) {
 
         printf("================================Scheduer @ sec=%6.9lf\n", current_realtime-start_realtime);
 

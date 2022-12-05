@@ -635,7 +635,7 @@ int seq_frame_process(void)
     for (;;) {
 
        if (read_queue(&buf, FRAME_PROCESS_QUEUE) != 0) {
-            printf("\nFRAME_PROCESS: Frames not available yet\n");
+            //printf("\nFRAME_PROCESS: Frames not available yet\n");
             return 0;
         }
 
