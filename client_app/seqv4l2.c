@@ -334,7 +334,7 @@ int read_sensor_state()
     if (read(gpio_fd, &sensor_data, 1) != 1) {
 	printf("\n\r Failed to get data from gpio driver");
     }
-    printf("\n\r Sensor data is %c", sensor_data);
+    //printf("\n\r Sensor data is %c", sensor_data);
     return (sensor_data == '0') ? 0:1;
     //return test_data[(test_cnt++) % sizeof(test_data)];
 }
@@ -342,7 +342,7 @@ int read_sensor_state()
 
 void run_surveillance_camera_state_machine(int state)
 {
-	printf("\n\r run_surveillance_camera_state_machine: state is %d", state);
+	//printf("\n\r run_surveillance_camera_state_machine: state is %d", state);
 	if (state == OBJECT_DETECTED) {
 		if (enable_surveillance) { //if surveillance is in progress
 			stop_surveillance_cnt = 0;
@@ -438,7 +438,7 @@ void *Service_1_frame_acquisition(void *threadp)
     // Start up processing and resource initialization
     clock_gettime(MY_CLOCK_TYPE, &current_time_val); current_realtime=realtime(&current_time_val);
     syslog(LOG_CRIT, "S1 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
-    printf("S1 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
+    //printf("S1 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
 
     while(!abortS1) // check for synchronous abort request
     {
@@ -474,7 +474,7 @@ void *Service_2_frame_process(void *threadp)
 
     clock_gettime(MY_CLOCK_TYPE, &current_time_val); current_realtime=realtime(&current_time_val);
     syslog(LOG_CRIT, "S2 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
-    printf("S2 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
+    //printf("S2 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
 
     while(!abortS2)
     {
@@ -504,7 +504,7 @@ void *Service_3_frame_storage(void *threadp)
 
     clock_gettime(MY_CLOCK_TYPE, &current_time_val); current_realtime=realtime(&current_time_val);
     syslog(LOG_CRIT, "S3 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
-    printf("S3 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
+    //printf("S3 thread @ sec=%6.9lf\n", current_realtime-start_realtime);
 
     while(!abortS3)
     {

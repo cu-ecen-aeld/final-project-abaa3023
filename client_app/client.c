@@ -55,7 +55,7 @@ void tx_frame(unsigned char *frame, unsigned int file_size)
 
     while(file_size){
         tx_bytes = send(socket_desc, frame, file_size, 0);  //Send the data that was written from JPG file
-        printf("%d bytes have been sent!\n",tx_bytes);
+        //printf("%d bytes have been sent!\n",tx_bytes);
         file_size -= tx_bytes;    //Decrement file_size
     }
 

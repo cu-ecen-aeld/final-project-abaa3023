@@ -380,7 +380,7 @@ static void dump_ppm(const void *p, int size, unsigned int tag, struct timespec 
 #endif
     clock_gettime(CLOCK_MONOTONIC, &time_now);
     fnow = (double)time_now.tv_sec + (double)time_now.tv_nsec / 1000000000.0;
-    printf("Frame written to flash at %lf, %d, bytes\n", (fnow-fstart), total);
+    //printf("Frame written to flash at %lf, %d, bytes\n", (fnow-fstart), total);
 
     close(dumpfd);
     
@@ -462,7 +462,7 @@ static int save_image(const void *p, int size, struct timespec *frame_time)
     unsigned char *frame_ptr = (unsigned char *)p;
 
     save_framecnt++;
-    printf("save frame %d: ", save_framecnt);
+    //printf("save frame %d: ", save_framecnt);
     
 
     if(fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV)
@@ -473,14 +473,14 @@ static int save_image(const void *p, int size, struct timespec *frame_time)
         if(save_framecnt > 0) 
         {
             dump_ppm(frame_ptr, ((size*6)/4), save_framecnt, frame_time);
-            printf("Dump YUYV converted to RGB size %d\n", size);
+            //printf("Dump YUYV converted to RGB size %d\n", size);
         }
 #endif
 
     }
     else if(fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_RGB24)
     {
-        printf("Dump RGB as-is size %d\n", size);
+        //printf("Dump RGB as-is size %d\n", size);
         dump_ppm(frame_ptr, size, process_framecnt, frame_time);
     }
     else
