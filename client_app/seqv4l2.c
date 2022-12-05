@@ -307,8 +307,8 @@ void main(int argc, char *argv[])
 }
 
 
-#define OBJECT_NOT_DETECTED "0"
-#define OBJECT_DETECTED     "1"
+#define OBJECT_NOT_DETECTED  (0)
+#define OBJECT_DETECTED      (1)
 
 int enable_surveillance = 0;
 int stop_surveillance_cnt = 0;
@@ -318,9 +318,9 @@ int start_surveillance_cnt = 0;
   //                 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 //int test_cnt = 0;
-unsigned char read_sensor_state()
+int read_sensor_state()
 {
-    unsigned char sensor_data;
+    char sensor_data;
 
     if (gpio_fd == -1) {
 	gpio_fd = open("/dev/my_gpio_driver", O_RDWR | O_CREAT, S_IWUSR | S_IRUSR | S_IWGRP | S_IRGRP | S_IROTH);
@@ -334,17 +334,19 @@ unsigned char read_sensor_state()
     if (read(gpio_fd, &sensor_data, 1) != 1) {
 	printf("\n\r Failed to get data from gpio driver");
     }
-    printf("\n\r Sensor data is %d", sensor_data);
-    return sensor_data;
+    printf("\n\r Sensor data is %c", sensor_data);
+    return (sensor_data == '0') ? 0:1;
     //return test_data[(test_cnt++) % sizeof(test_data)];
 }
 
 
-void run_surveillance_camera_state_machine(char state)
+void run_surveillance_camera_state_machine(int state)
 {
+	printf("\n\r run_surveillance_camera_state_machine: state is %d", state);
 	if (state == OBJECT_DETECTED) {
 		if (enable_surveillance) { //if surveillance is in progress
 			stop_surveillance_cnt = 0;
+			printf("\n\r OBJECT_DETECTED, SURVEILLANCE ENABLED, RESTTING STOP COUNT");
 		} else {
 			if (++start_surveillance_cnt >= 10){
 				enable_surveillance = 1;
@@ -362,6 +364,8 @@ void run_surveillance_camera_state_machine(char state)
 	
 			}
 		} else {
+			printf("\n\r OBJECT_NOT_DETECTED, SURVEILLANCE_NOT_ENABLED, RESTTING START COUNT");
+
 			start_surveillance_cnt = 0;
 		}
 	}
@@ -404,7 +408,7 @@ void Sequencer(int id)
 
         printf("================================Scheduer @ sec=%6.9lf\n", current_realtime-start_realtime);
 
-       char state = "0";
+       int state = 0;
        state = read_sensor_state();
        run_surveillance_camera_state_machine(state);
     }
