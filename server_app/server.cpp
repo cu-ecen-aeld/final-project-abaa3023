@@ -63,6 +63,13 @@ void create_new_image_file()
  
 void display_frame(unsigned char *data, int size)
 {
+
+    Mat image;
+
+    image = imread(&ppm_writename[0], 1);
+    imshow("VIDEO FFED", image);
+    image.release();
+#if 0
     Mat out_frame;
 
     /* setting the channels for outframe */
@@ -72,6 +79,9 @@ void display_frame(unsigned char *data, int size)
 
     imshow("video footage",  out_frame);
     out_frame.release();
+#endif
+    if (waitKey(10) == 'q') {
+    }
 }
  
 void frame_state_machine(unsigned char *data, int size)
@@ -81,7 +91,7 @@ void frame_state_machine(unsigned char *data, int size)
        case STATE_HEADER:
          if ((size + partial_frame_header_offset) == IMAGE_HEADER_LENGTH) {
              memcpy(&ppm_header[partial_frame_header_offset], data, size);
-             printf("\n\r Saving complete header, partial_frame_header_offset=%d", partial_frame_header_offset);
+             //printf("\n\r Saving complete header, partial_frame_header_offset=%d", partial_frame_header_offset);
              if (write(dump_fd, ppm_header, sizeof(ppm_header)) != IMAGE_HEADER_LENGTH) {
                  printf("\n\r HEADER_EXACT: Failed to write ppm header");
              }
@@ -89,7 +99,7 @@ void frame_state_machine(unsigned char *data, int size)
              next_state = STATE_FRAME;
          } else if ((size + partial_frame_header_offset) > IMAGE_HEADER_LENGTH) {
              memcpy(&ppm_header[partial_frame_header_offset], data, (IMAGE_HEADER_LENGTH-partial_frame_header_offset));
-             printf("\n\r extra header: Saving header, partial_frame_header_offset=%d", partial_frame_header_offset);
+             //printf("\n\r extra header: Saving header, partial_frame_header_offset=%d", partial_frame_header_offset);
              size -= (IMAGE_HEADER_LENGTH - partial_frame_header_offset);
              data += (IMAGE_HEADER_LENGTH - partial_frame_header_offset);
              if (write(dump_fd, ppm_header, sizeof(ppm_header)) != IMAGE_HEADER_LENGTH) {
@@ -99,7 +109,7 @@ void frame_state_machine(unsigned char *data, int size)
              next_state = STATE_FRAME;
              frame_state_machine(data, size); //save the remaining data which is a frame
          } else {
-             printf("\n\r partial header: Saving partial header, partial_frame_header_offset=%d", partial_frame_header_offset);
+             //printf("\n\r partial header: Saving partial header, partial_frame_header_offset=%d", partial_frame_header_offset);
              memcpy(&ppm_header[partial_frame_header_offset], data, size);
              partial_frame_header_offset += size;
          }
@@ -107,12 +117,13 @@ void frame_state_machine(unsigned char *data, int size)
        case STATE_FRAME:
          if ((size + partial_frame_offset) == RAW_RGB_640_480_SIZE) {
              memcpy(&frame_buffer[partial_frame_offset], data, size);
-                 
-             display_frame(&frame_buffer[0], RAW_RGB_640_480_SIZE);
              printf("\n\r Saving complete frame, partial_frame_offset=%d", partial_frame_offset);
              if (write(dump_fd, frame_buffer, RAW_RGB_640_480_SIZE) != RAW_RGB_640_480_SIZE) {
                 printf("\n\r EXACT_FRAME: write mismatch");
 	     }
+
+	     display_frame(&frame_buffer[0], RAW_RGB_640_480_SIZE);
+ 
              partial_frame_offset = 0;
              next_state = STATE_HEADER;
              close(dump_fd);
@@ -120,21 +131,21 @@ void frame_state_machine(unsigned char *data, int size)
          } else if ((size + partial_frame_offset) > RAW_RGB_640_480_SIZE) {
              memcpy(&frame_buffer[partial_frame_offset], data, (RAW_RGB_640_480_SIZE-partial_frame_offset));
              printf("\n\r Extra frame: Saving complete frame, partial_frame_offset=%d", partial_frame_offset);
-
-	     display_frame(&frame_buffer[0], RAW_RGB_640_480_SIZE);
-             
              size -= (RAW_RGB_640_480_SIZE - partial_frame_offset);
              data += (RAW_RGB_640_480_SIZE - partial_frame_offset);
               if (write(dump_fd, frame_buffer, RAW_RGB_640_480_SIZE) != RAW_RGB_640_480_SIZE) {
                 printf("\n\r EXACT_FRAME: write mismatch");
 	     }
+
+	     display_frame(&frame_buffer[0], RAW_RGB_640_480_SIZE);
+                 
              partial_frame_offset = 0;
              next_state = STATE_HEADER;
              close(dump_fd);
              create_new_image_file();
              frame_state_machine(data, size); //save the remaining data which is a header
          } else {
-             printf("\n\r Partial frame: Saving partial frame, partial_frame_offset=%d", partial_frame_offset);
+             //printf("\n\r Partial frame: Saving partial frame, partial_frame_offset=%d", partial_frame_offset);
              memcpy(&frame_buffer[partial_frame_offset], data, size);
              partial_frame_offset += size;
          }
@@ -223,41 +234,15 @@ void func(int sockfd)
 
     // infinite loop for chat
     for (;;) {
-        for (int i = 0; i < 49; i++)
-            printf("%c", buf[i]); 
-
 
 	read_bytes = read(sockfd, &buf[0], sizeof(buf));
         if (read_bytes < 1) {
                exit(-1);
         }
 
-        printf("\n read_bytes is %d", read_bytes);
-        for (int i = 0; i < 49; i++)
-            printf("%c", buf[i]); 
+       // printf("\n read_bytes is %d", read_bytes);
 
         frame_state_machine(&buf[0], read_bytes);
-
-#if 0   
-        total_bytes = RGB_640_480_SIZE; 
-        while(total_bytes > 0) {  
-            read_bytes = read(sockfd, buf, sizeof(buf));
-            if (read_bytes < 1) {
-               exit(-1);
-            }
-
-            // subtract 1 from sizeof header because it includes the null terminator for the string
-            written=write(dump_fd, ppm_header, sizeof(ppm_header)-1);
-
-            total_bytes-=read_bytes;
-
-            printf("\n\r written %d bytes and total bytes :%d", read_bytes, total_bytes);
-            if (write(dump_fd, &buf, read_bytes) != read_bytes) {
-                printf("\n\r read write mismatch");
-	    }
-
-        }
-  #endif
      }
 }
    
