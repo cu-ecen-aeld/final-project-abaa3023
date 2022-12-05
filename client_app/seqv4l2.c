@@ -340,13 +340,13 @@ unsigned char read_sensor_state()
 }
 
 
-void run_surveillance_camera_state_machine(int state)
+void run_surveillance_camera_state_machine(char state)
 {
 	if (state == OBJECT_DETECTED) {
 		if (enable_surveillance) { //if surveillance is in progress
 			stop_surveillance_cnt = 0;
 		} else {
-			if (++start_surveillance_cnt >= 20) {
+			if (++start_surveillance_cnt >= 10){
 				enable_surveillance = 1;
 				stop_surveillance_cnt = 0;
 			printf("\n\r Trigger detected, start capturing");
@@ -404,7 +404,7 @@ void Sequencer(int id)
 
         printf("================================Scheduer @ sec=%6.9lf\n", current_realtime-start_realtime);
 
-       int state = 0;
+       char state = "0";
        state = read_sensor_state();
        run_surveillance_camera_state_machine(state);
     }
