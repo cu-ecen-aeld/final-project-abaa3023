@@ -9,7 +9,7 @@ https://github.com/cu-ecen-aeld/final-project-maheshchnt/wiki/Project-Overview
 
 https://github.com/cu-ecen-aeld/final-project-maheshchnt/wiki/Schedule
 
-# Project demo
+# Student Video Demos
 
 https://github.com/cu-ecen-aeld/final-project-abaa3023/wiki/Abijith-Ananda-Krishnan's-Final-Project-Video
 
